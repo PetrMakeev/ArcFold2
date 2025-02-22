@@ -1,0 +1,7 @@
+psutil==6.1.1
+PyQt6==6.8.1
+PyQt6-Qt6==6.8.2
+PyQt6_sip==13.10.0
+PyYAML==6.0.2
+schedule==1.2.2
+watchdog==6.0.0

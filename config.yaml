@@ -1,0 +1,56 @@
+console_mode: visible
+log_retention_days: 8
+tasks:
+-  active: false
+   compression: zip_deflated
+   days_of_month: []
+   days_of_week: []
+   destination: D:\test2
+   direct_to_archive: true
+   exclude_mask: []
+   include_mask: ['*.html', '*.d*']
+   keep_last: 5
+   name: Backup_Task_1
+   schedule: daily
+   source: D:\test1
+   time: '19:41'
+-  active: false
+   compression: zip_stored
+   days_of_month: []
+   days_of_week: [Monday, Friday, Sunday]
+   destination: D:\test2\Новая папка
+   direct_to_archive: true
+   exclude_mask: ['*.html', '*.d*']
+   include_mask: []
+   keep_last: 3
+   name: резервирование_2_1
+   schedule: weekly
+   source: D:\test1
+   time: '19:46'
+-  active: false
+   compression: zip_deflated
+   days_of_month: []
+   days_of_week: [Sunday]
+   destination: D:\test2
+   direct_to_archive: true
+   exclude_mask: []
+   include_mask: ['*.*']
+   keep_last: 3
+   name: Backup_Task_2_2
+   schedule: weekly
+   source: D:\test1
+   time: '12:04'
+-  active: false
+   compression: zip_stored
+   days_of_month: [5, 6, 7, 8]
+   days_of_week: []
+   destination: D:\test2
+   direct_to_archive: false
+   exclude_mask: ['*.tmp']
+   include_mask: []
+   keep_last: 5
+   name: Monthly_Backup
+   schedule: monthly
+   source: D:\test1
+   time: 04:00
+temp_directory: c:\Python\ArcFold2\temp_archiver

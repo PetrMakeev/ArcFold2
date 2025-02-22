@@ -1,0 +1,123 @@
+# archiver.py
+import os
+import zipfile
+from datetime import datetime
+from service_app.logger import setup_logger
+import fnmatch
+import multiprocessing
+
+logger = setup_logger()
+
+
+def parse_mask(mask):
+    """
+    Разбирает строку масок в список.
+
+    :param mask: строка масок, разделённая запятой, либо None
+    :return: список масок или пустой список
+    """
+    if not mask:
+        return []
+    return [m.strip() for m in mask.split(",")]
+
+
+def validate_files(source, exclude_masks=None, include_masks=None):
+
+    # exclude_masks = parse_mask(exclude_mask)
+    # include_masks = parse_mask(include_mask)
+
+    if not os.path.exists(source):
+        logger.log("error", f"Source path does not exist: {source}")
+        return False
+
+    if os.path.isfile(source):
+        return True
+
+    files = os.listdir(source)
+    matched_files = []
+    
+    for root, _, files in os.walk(source):
+        for file in files:
+            file_path = os.path.join(root, file)
+            include_match = any(fnmatch.fnmatch(file, mask) for mask in include_masks) if include_masks else True
+            exclude_match = any(fnmatch.fnmatch(file, mask) for mask in exclude_masks) if exclude_masks else False
+
+            if include_match and not exclude_match:
+                matched_files.append(file_path)
+
+    if not matched_files:
+        logger.log("warning", f"No matching files found in {source}")
+        return False
+
+    return True
+
+def create_archive(task_name, source, destination, exclude_masks=None, include_masks=None, temp_directory=None, direct_to_archive=False, compression="zip_stored"):
+    """
+    Создает архив с указанными параметрами.
+    
+    :param task_name: Имя задачи.
+    :param source: Исходный путь.
+    :param destination: Путь для сохранения архива.
+    :param exclude_mask: Маска исключаемых файлов.
+    :param include_mask: Маска включаемых файлов.
+    :param temp_directory: Временная директория.
+    :param direct_to_archive: Использовать ли временную папку.
+    :param compression: Тип сжатия ("zip_stored" или "zip_deflated").
+    """
+    # exclude_masks = parse_mask(exclude_mask)
+    # include_masks = parse_mask(include_mask)
+    
+    try:
+        
+        # Настройка типа сжатия
+        zip_compression = zipfile.ZIP_DEFLATED if compression == "zip_deflated" else zipfile.ZIP_STORED
+
+        if not os.path.exists(destination):
+            os.makedirs(destination)
+
+        if not direct_to_archive and temp_directory and not os.path.exists(temp_directory):
+            os.makedirs(temp_directory)
+
+
+        archive_name = f"{task_name}-{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.zip"
+        archive_path = os.path.join(destination, archive_name)
+
+        with zipfile.ZipFile(archive_path, 'w', compression=zip_compression) as archive:
+            for root, _, files in os.walk(source):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    rel_path = os.path.relpath(file_path, source)
+
+                    include_match = any(fnmatch.fnmatch(file, mask) for mask in include_masks) if include_masks else True
+                    exclude_match = any(fnmatch.fnmatch(file, mask) for mask in exclude_masks) if exclude_masks else False
+
+                    if include_match and not exclude_match:
+                        archive.write(file_path, rel_path)
+
+        logger.log("info", f"Archive created at: {archive_path}")
+        return archive_path
+
+    except Exception as e:
+        logger.log("error", f"Error creating archive: {e}")
+        return None
+
+def run_archive_in_process(task_name, source, destination, exclude_mask=None, include_mask=None, temp_directory=None, direct_to_archive=False, compression="zip_stored"):
+    """
+    Запускает процесс архивирования в отдельном процессе.
+
+    :param task_name: Имя задачи архивирования.
+    :param source: Исходный путь для архивирования.
+    :param destination: Путь сохранения архива.
+    :param exclude_mask: Маска исключаемых файлов.
+    :param include_mask: Маска включаемых файлов.
+    :param temp_directory: Временная папка.
+    :param direct_to_archive: Указывает, использовать ли временную папку.
+    :param compression: Тип сжатия ("zip_stored" или "zip_deflated").
+    """
+    process = multiprocessing.Process(
+        target=create_archive,
+        args=(task_name, source, destination, exclude_mask, include_mask, temp_directory, direct_to_archive, compression)
+    )
+    process.start()
+    logger.log("info", f"Archiving process started with PID {process.pid} for task '{task_name}'")
+    return process
