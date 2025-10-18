@@ -12,12 +12,12 @@ from datetime import datetime
 import os
 import yaml
 from gui_app.ui_main import Ui_MainWindow
-from gui_app.SettingWindow import SettingWindow
+from gui_app.SettingWindow import SettingWindow, ButtonManager, TaskTableModel, next_run_time, resource_path, days_translation, day_mapping
+
 from service_app.service import load_config, check_source_directory
-from gui_app.button_manager import ButtonManager
-from gui_app.next_start import next_run_time
-from gui_app.tableview_task import TaskTableModel, days_translation, day_mapping
-from gui_app.resource_image import resource_path
+
+
+
 
 
 

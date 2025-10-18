@@ -8,10 +8,10 @@ import os
 import ctypes
 import sys
 import shutil
+
 from service_app.logger import setup_logger
-from service_app.config_watcher import watch_config
 from service_app.db_handler import init_db, log_task_status
-from service_app.archiver import run_archive_in_process, validate_files
+from service_app.archiver import run_archive_in_process, validate_files, watch_config
 
 
 logger = setup_logger()

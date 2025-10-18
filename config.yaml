@@ -53,4 +53,4 @@ tasks:
    schedule: monthly
    source: D:\test1
    time: 04:00
-temp_directory: c:\Python\ArcFold2\temp_archiver
+temp_directory: d:\work\ArcFold2\gui_app\temp_archiver
