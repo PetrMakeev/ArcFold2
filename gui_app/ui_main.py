@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file './gui_app/ui_main.ui'
+# Form implementation generated from reading ui file '.\gui_app\ui_main.ui'
 #
 # Created by: PyQt6 UI code generator 6.8.1
 #
@@ -29,6 +29,10 @@ class Ui_MainWindow(object):
         self.frm_grid.setObjectName("frm_grid")
         self.table = QtWidgets.QTableView(parent=self.frm_grid)
         self.table.setGeometry(QtCore.QRect(8, 8, 776, 546))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(9)
+        self.table.setFont(font)
         self.table.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
         self.table.setObjectName("table")
         self.frm_edit = QtWidgets.QFrame(parent=self.centralwidget)
@@ -405,6 +409,9 @@ class Ui_MainWindow(object):
         self.statusbar.setGeometry(QtCore.QRect(16, 2, 761, 20))
         self.statusbar.setText("")
         self.statusbar.setObjectName("statusbar")
+        self.frm_edit.raise_()
+        self.frm_grid.raise_()
+        self.bottom_bar.raise_()
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)

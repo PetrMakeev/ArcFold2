@@ -239,9 +239,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.table.setModel(self.model)
         
         # ширина столбцов
-        self.table.setColumnWidth(0, 290)
-        self.table.setColumnWidth(1, 330)
-        self.table.setColumnWidth(2, 110)
+        self.table.setColumnWidth(0, 200)
+        self.table.setColumnWidth(1, 380)
+        self.table.setColumnWidth(2, 150)
         self.table.setColumnWidth(3, 0)
         self.table.setColumnWidth(4, 0)
         self.table.setColumnWidth(5, 0)
