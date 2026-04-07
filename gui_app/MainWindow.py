@@ -13,7 +13,7 @@ from PySide6.QtCore import Qt, QDate, QSize, QRegularExpression, QTime, QTimer
 from PySide6.QtGui import QCursor, QFont, QAction, QIcon, QRegularExpressionValidator, QPainter, QPixmap, QColor
 from datetime import datetime
 import os
-import yaml
+from ruamel.yaml import YAML
 from gui_app.ui_main import Ui_MainWindow
 from gui_app.SettingWindow import SettingWindow, ButtonManager, TaskTableModel, next_run_time, resource_path, days_translation, day_mapping
 
@@ -31,6 +31,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.setWindowIcon(QIcon(resource_path("icons\\archive.ico")))
 
+         # Создаем объект YAML (лучше сделать это один раз, возможно, как атрибут класса,
+        # но для простоты идентично предыдущему поведению помещаем тут)
+        self.yaml = YAML()
+        self.yaml.allow_unicode = True
+        self.yaml.default_flow_style = None
+        # Устанавливаем отступы для вложенных структур (аналог indent=3 в pyyaml)
+        self.yaml.indent(mapping=2, sequence=4, offset=2)
+        
         # создаем формы приказов и подразделений
         self.w_setting = SettingWindow(parent = self)
         
@@ -110,7 +118,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             # Сохраняем обновленный файл
             with open('config.yaml', "w", encoding="utf-8") as file:
-                yaml.dump(self.config, file, allow_unicode=True, default_flow_style=None, indent=3)
+                self.yaml.dump(self.config, file)
 
             self.data = self.load_config()
             self.refresh_grid()
@@ -269,7 +277,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.config["temp_directory"] = self.temp_directory
         # Сохраняем изменения о временной папке в конфигурационный файл
         with open('config.yaml', "w", encoding="utf-8") as file:
-            yaml.dump(self.config, file, allow_unicode=True, default_flow_style=None, indent=3)
+            self.yaml.dump(self.config, file)
         
         # формируем таблицу для грида
         for el in self.config.get('tasks',[]):
@@ -372,7 +380,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             # Сохраняем обновленный файл
             with open('config.yaml', "w", encoding="utf-8") as file:
-                yaml.dump(self.config, file, allow_unicode=True, default_flow_style=None, indent=3)
+                self.yaml.dump(self.config, file)
 
         except Exception as e:
             print("Ошибка сохранения конфигурации")
@@ -392,7 +400,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             # Сохраняем обновленный файл
             with open('config.yaml', "w", encoding="utf-8") as file:
-                yaml.dump(self.config, file, allow_unicode=True, default_flow_style=None, indent=3)
+                self.yaml.dump(self.config, file)
 
         except Exception as e:
             print("Ошибка сохранения конфигурации")

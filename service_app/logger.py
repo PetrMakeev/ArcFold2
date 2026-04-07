@@ -1,14 +1,15 @@
 import logging
 import os
 from datetime import datetime, timedelta
-import yaml
+from ruamel.yaml import YAML
 import multiprocessing
 
 def load_config():
     """Загружает конфигурацию из файла config.yaml."""
     try:
+        yaml_obj = YAML(typ='safe') # Используем 'safe' тип для безопасной загрузки
         with open("config.yaml", "r", encoding="utf-8") as file:
-            return yaml.safe_load(file)
+            return yaml_obj.load(file)
     except Exception as e:
         print(f"Error loading configuration file: {e}")
         return {}

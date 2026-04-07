@@ -2,7 +2,7 @@ from multiprocessing import freeze_support
 import schedule
 import time
 from datetime import datetime
-import yaml
+from ruamel.yaml import YAML
 from threading import Thread
 import os
 import ctypes
@@ -37,8 +37,9 @@ def get_executable_path():
 def load_config():
     """Загружает конфигурацию из файла config.yaml."""
     try:
+        yaml_obj = YAML(typ='safe') # Используем 'safe' тип для безопасной загрузки
         with open('config.yaml', 'r', encoding="utf-8") as file:
-            config = yaml.safe_load(file)
+            config = yaml_obj.load(file)
         logger.log("info", "Configuration file loaded successfully.")
         return config
     except Exception as e:
@@ -197,9 +198,15 @@ def check_source_directory(config):
         #     change_active_tasks = True
             
     if change_active_tasks:
+        # Создаем объект YAML
+        yaml_obj = YAML()
+        yaml_obj.allow_unicode = True       
+        yaml_obj.default_flow_style = None
+        yaml_obj.indent(mapping=3, sequence=3, offset=2)
+
         # Сохраняем обновленный файл
         with open('config.yaml', "w", encoding="utf-8") as file:
-            yaml.dump(config, file, allow_unicode=True, default_flow_style=None, indent=3)        
+            yaml_obj.dump(config, file)        
     return config    
         
 def main():
