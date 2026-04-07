@@ -1,13 +1,16 @@
-from PyQt6.QtWidgets import (QMainWindow,
-                            QTableView, 
-                            QMenu,
-                            QComboBox, QMessageBox, QFileDialog, QLabel
-                             )
-from PyQt6 import (QtCore, 
-                   QtGui, 
-                   QtWidgets)
-from PyQt6.QtCore import Qt, QDate, QSize, QRegularExpression, QTime, QTimer
-from PyQt6.QtGui import QCursor, QFont, QAction, QIcon, QRegularExpressionValidator, QPainter, QPixmap, QColor
+from PySide6.QtWidgets import (
+    QMainWindow,
+    QTableView, 
+    QMenu,
+    QComboBox, QMessageBox, QFileDialog, QLabel
+)
+from PySide6 import (
+    QtCore, 
+    QtGui, 
+    QtWidgets
+)
+from PySide6.QtCore import Qt, QDate, QSize, QRegularExpression, QTime, QTimer
+from PySide6.QtGui import QCursor, QFont, QAction, QIcon, QRegularExpressionValidator, QPainter, QPixmap, QColor
 from datetime import datetime
 import os
 import yaml
@@ -17,12 +20,9 @@ from gui_app.SettingWindow import SettingWindow, ButtonManager, TaskTableModel, 
 from service_app.service import load_config, check_source_directory
 
 
-
-
-
-
 allowed_chars = set("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZабвгдежзийклмнопрстуфхчшщьыъэюяАБВГДЕЖЗИЙКЛМНОПРСТУФХЧШЩЬЫЪЭЮЯ,. *")
 allowed_chars_name = set("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZабвгдежзийклмнопрстуфхчшщьыъэюяАБВГДЕЖЗИЙКЛМНОПРСТУФХЧШЩЬЫЪЭЮЯ-_ ")
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, *args, obj=None, **kwargs):
@@ -85,7 +85,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             context_menu.addAction(pop_setting)
                 
             context_menu.popup(QCursor.pos())
- 
+
 
     # пункт меню удалить
     def popup_del(self):
@@ -189,7 +189,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.btn_direct_to_archive.click()
         if task.get("direct_to_archive", True):
             self.btn_direct_to_archive.click()
-                
 
 
     # проверка введенных масок
@@ -228,8 +227,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.edit_mask_excl.setFocus()
             return False
                 
-        
-  
+
                             
     # настраиваем грид
     def refresh_grid(self):
@@ -316,7 +314,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.edit_destination.setFocus()
             return         
         
-       
+        
         # определяем маски
         if not self.mask_check("include", silent=True):
             return
@@ -399,7 +397,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         except Exception as e:
             print("Ошибка сохранения конфигурации")
         
-                     
+
 
     ##############################################################################
     # Настройка интерфейса
@@ -544,5 +542,3 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             for day in days_of_month:
                 if key == f"btn_m_{str(day).zfill(2)}" :
                     button.click()                                     
-
-    

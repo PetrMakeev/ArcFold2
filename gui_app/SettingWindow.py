@@ -1,13 +1,15 @@
-
-from PyQt6.QtWidgets import (QMainWindow,
-                             QTableView, 
-                             QMenu, QMessageBox, QFileDialog)
-from PyQt6 import (QtCore, 
-                   QtGui, 
-                   QtWidgets)
-from PyQt6.QtCore import Qt, QDate
-from PyQt6.QtGui import QCursor, QAction, QIcon
-from PyQt6.QtGui import QFont
+from PySide6.QtWidgets import (
+    QMainWindow,
+    QTableView, 
+    QMenu, QMessageBox, QFileDialog
+)
+from PySide6 import (
+    QtCore, 
+    QtGui, 
+    QtWidgets
+)
+from PySide6.QtCore import Qt, QDate
+from PySide6.QtGui import QCursor, QAction, QIcon, QFont
 from datetime import datetime
 from os import path, getcwd, remove
 import subprocess
@@ -41,14 +43,13 @@ class SettingWindow(QMainWindow, Ui_frmSetting):
         self.parent = parent
         
         self.status_service = False
-        
        
         self.setting_ui_element()
         
 
     # подготовка к редактированию настроек
     def read_config(self, config):
-        self.edit_temp_directory.setText(config.get('temp_directory', path.dirname(path.abspath(__file__))+"\\temp_archiver"))
+        self(config.get('temp_directory', path.dirname(path.abspath(__file__))+"\\temp_archiver"))
         self.edit_log_retention_days.setValue(config.get('log_retention_days', 1))
         
 
@@ -100,7 +101,7 @@ class SettingWindow(QMainWindow, Ui_frmSetting):
         # Запускаем PowerShell в скрытом режиме
         startupinfo = subprocess.STARTUPINFO()
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW  # Отключаем окно            
-        
+            
         try:
             # Выполнение команды
             subprocess.run(command, shell=True, check=True)
@@ -178,7 +179,6 @@ class SettingWindow(QMainWindow, Ui_frmSetting):
             folder_path = path.normpath(folder_path)  # Преобразуем слеши
             self.edit_temp_directory.setText(folder_path)
         pass  
-    
     
 
     ##############################################################################
@@ -313,6 +313,7 @@ class ButtonManager:
     #         self.toggle_filter(filter_name, False)
     
 
+    
     
     
     
