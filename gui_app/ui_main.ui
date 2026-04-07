@@ -1027,7 +1027,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>460</y>
+       <y>280</y>
        <width>311</width>
        <height>20</height>
       </rect>
@@ -1043,9 +1043,9 @@
      <property name="geometry">
       <rect>
        <x>340</x>
-       <y>460</y>
-       <width>51</width>
-       <height>20</height>
+       <y>280</y>
+       <width>81</width>
+       <height>22</height>
       </rect>
      </property>
      <property name="minimum">
@@ -1059,7 +1059,7 @@
      <property name="geometry">
       <rect>
        <x>410</x>
-       <y>460</y>
+       <y>280</y>
        <width>131</width>
        <height>20</height>
       </rect>
@@ -1075,9 +1075,9 @@
      <property name="geometry">
       <rect>
        <x>550</x>
-       <y>460</y>
+       <y>280</y>
        <width>141</width>
-       <height>20</height>
+       <height>22</height>
       </rect>
      </property>
      <item>
@@ -1095,7 +1095,7 @@
      <property name="geometry">
       <rect>
        <x>340</x>
-       <y>490</y>
+       <y>310</y>
        <width>321</width>
        <height>22</height>
       </rect>
@@ -1111,7 +1111,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>490</y>
+       <y>310</y>
        <width>311</width>
        <height>22</height>
       </rect>
@@ -1153,9 +1153,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>240</y>
+       <y>360</y>
        <width>761</width>
-       <height>201</height>
+       <height>141</height>
       </rect>
      </property>
      <property name="currentIndex">
@@ -1228,56 +1228,11 @@
          <string>...</string>
         </property>
        </widget>
-       <widget class="QLabel" name="lbl_name_3">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>40</y>
-          <width>131</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Куда сохранять </string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="btn_destination">
-        <property name="geometry">
-         <rect>
-          <x>710</x>
-          <y>40</y>
-          <width>31</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>...</string>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="edit_destination">
-        <property name="geometry">
-         <rect>
-          <x>150</x>
-          <y>40</y>
-          <width>561</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::FocusPolicy::NoFocus</enum>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
        <widget class="QLabel" name="lbl_mask_incl">
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>70</y>
+          <y>40</y>
           <width>311</width>
           <height>20</height>
          </rect>
@@ -1293,7 +1248,7 @@
         <property name="geometry">
          <rect>
           <x>330</x>
-          <y>70</y>
+          <y>40</y>
           <width>411</width>
           <height>22</height>
          </rect>
@@ -1303,7 +1258,7 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>100</y>
+          <y>70</y>
           <width>311</width>
           <height>20</height>
          </rect>
@@ -1319,7 +1274,7 @@
         <property name="geometry">
          <rect>
           <x>330</x>
-          <y>100</y>
+          <y>70</y>
           <width>411</width>
           <height>22</height>
          </rect>
@@ -1329,7 +1284,7 @@
         <property name="geometry">
          <rect>
           <x>630</x>
-          <y>70</y>
+          <y>40</y>
           <width>111</width>
           <height>20</height>
          </rect>
@@ -1345,7 +1300,7 @@
         <property name="geometry">
          <rect>
           <x>630</x>
-          <y>100</y>
+          <y>70</y>
           <width>111</width>
           <height>22</height>
          </rect>
@@ -1362,9 +1317,6 @@
        <zorder>lbl_name_2</zorder>
        <zorder>edit_source</zorder>
        <zorder>btn_source</zorder>
-       <zorder>lbl_name_3</zorder>
-       <zorder>btn_destination</zorder>
-       <zorder>edit_destination</zorder>
        <zorder>lbl_mask_incl</zorder>
        <zorder>edit_mask_incl</zorder>
        <zorder>lbl_mask_excl</zorder>
@@ -1393,8 +1345,114 @@
        <property name="frameShadow">
         <enum>QFrame::Shadow::Plain</enum>
        </property>
+       <widget class="QLineEdit" name="edit_source_2">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>10</y>
+          <width>561</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::FocusPolicy::NoFocus</enum>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="lbl_dbname">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>131</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Имя базы данных</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+       </widget>
       </widget>
      </widget>
+    </widget>
+    <widget class="QLineEdit" name="edit_destination">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>250</y>
+       <width>561</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::FocusPolicy::NoFocus</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_destination">
+     <property name="geometry">
+      <rect>
+       <x>740</x>
+       <y>250</y>
+       <width>31</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lbl_name_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>250</y>
+       <width>151</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Место хранения архива</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+     </property>
+    </widget>
+    <widget class="Line" name="line">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>230</y>
+       <width>761</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
+    </widget>
+    <widget class="Line" name="line_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>340</y>
+       <width>761</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
     </widget>
    </widget>
    <widget class="QFrame" name="bottom_bar">
@@ -1441,14 +1499,14 @@
   <tabstop>edit_period</tabstop>
   <tabstop>edit_time</tabstop>
   <tabstop>tab_period</tabstop>
-  <tabstop>tab_object</tabstop>
-  <tabstop>btn_source</tabstop>
   <tabstop>btn_destination</tabstop>
-  <tabstop>edit_mask_incl</tabstop>
-  <tabstop>edit_mask_excl</tabstop>
   <tabstop>edit_keep_last</tabstop>
   <tabstop>edit_compression</tabstop>
   <tabstop>btn_direct_to_archive</tabstop>
+  <tabstop>tab_object</tabstop>
+  <tabstop>btn_source</tabstop>
+  <tabstop>edit_mask_incl</tabstop>
+  <tabstop>edit_mask_excl</tabstop>
   <tabstop>btn_save</tabstop>
   <tabstop>btn_cancel</tabstop>
  </tabstops>

@@ -49,7 +49,7 @@ class SettingWindow(QMainWindow, Ui_frmSetting):
 
     # подготовка к редактированию настроек
     def read_config(self, config):
-        self(config.get('temp_directory', path.dirname(path.abspath(__file__))+"\\temp_archiver"))
+        self.edit_temp_directory.setText(config.get('temp_directory', path.dirname(path.abspath(__file__))+"\\temp_archiver"))
         self.edit_log_retention_days.setValue(config.get('log_retention_days', 1))
         
 
