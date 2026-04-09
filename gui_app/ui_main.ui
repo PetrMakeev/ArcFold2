@@ -1094,7 +1094,7 @@
     <widget class="QPushButton" name="btn_direct_to_archive">
      <property name="geometry">
       <rect>
-       <x>340</x>
+       <x>410</x>
        <y>310</y>
        <width>321</width>
        <height>22</height>
@@ -1110,14 +1110,14 @@
     <widget class="QLabel" name="lbl_keep_last_3">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>60</x>
        <y>310</y>
-       <width>311</width>
+       <width>341</width>
        <height>22</height>
       </rect>
      </property>
      <property name="text">
-      <string>Временная папка для создания архива</string>
+      <string>Использование временной папки для создания архива</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
@@ -1159,7 +1159,7 @@
       </rect>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab_file">
       <attribute name="title">
@@ -1171,7 +1171,7 @@
          <x>-1</x>
          <y>0</y>
          <width>761</width>
-         <height>171</height>
+         <height>111</height>
         </rect>
        </property>
        <property name="autoFillBackground">
@@ -1188,12 +1188,12 @@
          <rect>
           <x>10</x>
           <y>10</y>
-          <width>131</width>
+          <width>161</width>
           <height>22</height>
          </rect>
         </property>
         <property name="text">
-         <string>Что копировать </string>
+         <string>Папка для архивирования</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
@@ -1202,9 +1202,9 @@
        <widget class="QLineEdit" name="edit_source">
         <property name="geometry">
          <rect>
-          <x>150</x>
+          <x>180</x>
           <y>10</y>
-          <width>561</width>
+          <width>531</width>
           <height>22</height>
          </rect>
         </property>
@@ -1325,7 +1325,7 @@
      </widget>
      <widget class="QWidget" name="tab_db1c">
       <attribute name="title">
-       <string>Копирование базы 1с MS SQL</string>
+       <string>Копирование базы MS SQL</string>
       </attribute>
       <widget class="QFrame" name="frm_db1c">
        <property name="geometry">
@@ -1333,7 +1333,7 @@
          <x>0</x>
          <y>0</y>
          <width>761</width>
-         <height>171</height>
+         <height>111</height>
         </rect>
        </property>
        <property name="autoFillBackground">
@@ -1345,23 +1345,23 @@
        <property name="frameShadow">
         <enum>QFrame::Shadow::Plain</enum>
        </property>
-       <widget class="QLineEdit" name="edit_source_2">
+       <widget class="QLabel" name="lbl_dbname">
         <property name="geometry">
          <rect>
-          <x>150</x>
+          <x>390</x>
           <y>10</y>
-          <width>561</width>
+          <width>121</width>
           <height>22</height>
          </rect>
         </property>
-        <property name="focusPolicy">
-         <enum>Qt::FocusPolicy::NoFocus</enum>
+        <property name="text">
+         <string>Имя базы данных</string>
         </property>
-        <property name="readOnly">
-         <bool>true</bool>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
        </widget>
-       <widget class="QLabel" name="lbl_dbname">
+       <widget class="QLabel" name="lbl_1cname">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -1371,10 +1371,72 @@
          </rect>
         </property>
         <property name="text">
-         <string>Имя базы данных</string>
+         <string>Имя сервера MS SQL</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="chk_winlogin">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>50</y>
+          <width>231</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Проверка подлинности Windows </string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="lbl_1clogin">
+        <property name="geometry">
+         <rect>
+          <x>300</x>
+          <y>50</y>
+          <width>211</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Пароль администратора MS SQL</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="edit_1cname">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>10</y>
+          <width>221</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="edit_dbname">
+        <property name="geometry">
+         <rect>
+          <x>520</x>
+          <y>10</y>
+          <width>221</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="edit_1clogin">
+        <property name="geometry">
+         <rect>
+          <x>520</x>
+          <y>50</y>
+          <width>221</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="echoMode">
+         <enum>QLineEdit::EchoMode::Password</enum>
         </property>
        </widget>
       </widget>

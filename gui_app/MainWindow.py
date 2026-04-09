@@ -156,7 +156,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.edit_compression.setCurrentIndex(0)
         if self.btn_direct_to_archive.isChecked():
             self.btn_direct_to_archive.click()
-    
+        self.edit_1cname.setText("")
+        self.edit_dbname.setText("")
+        self.chk_winlogin.setChecked = self.chk_winlogin.setCheckState(Qt.Checked) 
+        self.edit_1clogin.setText("")
+        self.tab_object.setCurrentIndex(0)
+            
     # пункт меню Изменить     
     def popup_edit(self):
         # показываем панель грида
@@ -197,6 +202,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.btn_direct_to_archive.click()
         if task.get("direct_to_archive", True):
             self.btn_direct_to_archive.click()
+        self.edit_1cname.setText(task.get("1cname", ""))
+        self.edit_dbname.setText(task.get("dbname", ""))
+        if task.get("winlogin", True) == True:
+            winlogin = Qt.Checked
+        else:
+            winlogin = Qt.unChecked
+        self.chk_winlogin.setChecked = self.chk_winlogin.setCheckState(winlogin) #
+        self.edit_1clogin.setText(task.get("1clogin", ""))
+        self.tab_object.setCurrentIndex(0)
+        
 
 
     # проверка введенных масок
