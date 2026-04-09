@@ -162,6 +162,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.edit_name1c.setText("")
         self.edit_dbname.setText("")
         self.chk_loginwin.setCheckState(Qt.Checked) 
+        self.edit_login1c.setEnabled(False)
+        self.lbl_login1c.setEnabled(False)
         self.edit_login1c.setText("")
         self.tab_object.setCurrentIndex(0)
             
@@ -205,13 +207,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.btn_direct_to_archive.click()
         if task.get("direct_to_archive", True):
             self.btn_direct_to_archive.click()
-        self.edit_name1c.setText(task.get("1cname", ""))
+        self.edit_name1c.setText(task.get("name1с", ""))
         self.edit_dbname.setText(task.get("dbname", ""))
-        if task.get("winlogin", True) == True:
-            loginwin = Qt.Checked
+        if task.get("loginwin", True) == True:
+            #loginwin = Qt.Checked
+            self.edit_login1c.setEnabled(False)
+            self.lbl_login1c.setEnabled(False)
+            self.chk_loginwin.setChecked(True)
         else:
-            loginwin = Qt.unChecked
-        self.chk_loginwin.setCheckState(loginwin) 
+            #loginwin = Qt.unChecked
+            self.edit_login1c.setEnabled(True)
+            self.lbl_login1c.setEnabled(True)
+            self.chk_loginwin.setChecked(False) 
         login1c = task.get("login1c", "")
         if not login1c == "":
             login1c = self.encoder.decode(login1c)
@@ -387,7 +394,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "exclude_mask": self.curr_exclude_mask,
             "direct_to_archive": self.btn_direct_to_archive.isChecked(),
             "compression": "zip_deflated" if self.edit_compression.currentIndex() == 1 else "zip_stored",
-            "keep_last": self.edit_keep_last.value()
+            "keep_last": self.edit_keep_last.value(),
+            "name1c": self.edit_name1c.text(),
+            "dbname": self.edit_dbname.text(),
+            "loginwin": self.chk_loginwin.isChecked(),
+            "login1c": self.encoder.encode(self.edit_login1c.text())
         }
                 
         # """записываем конфигурацию в файла config.yaml."""
@@ -546,6 +557,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btn_m_31.clicked.connect(lambda: self.button_manager.toggle_button("btn_m_31", self.btn_m_31.isChecked()))
         self.btn_direct_to_archive.clicked.connect(lambda: self.button_manager.toggle_button("btn_direct_to_archive", self.btn_direct_to_archive.isChecked()))
  
+        # реакция на изменение чекбокса 
+        self.chk_loginwin.toggled.connect(self.set_login1c)
+ 
+ 
+    # устанавливаем доступность корректировки поля пароля 1с
+    def set_login1c(self, checked):
+        if checked:
+            self.lbl_login1c.setEnabled(False)    
+            self.edit_login1c.setEnabled(False)
+        else:
+            self.edit_login1c.setEnabled(True)
+            self.lbl_login1c.setEnabled(True)
+        
+    
     # устанавливаем значение всем кнопками дней недели    
     def set_days_of_week(self, checked=False):
         for key, button in self.ui_elements.items():

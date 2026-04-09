@@ -15,6 +15,11 @@ tasks:
     schedule: daily
     source: D:\test1
     time: 19:41
+    name1c: Server1c
+    dbname: BuchPro
+    loginwin: false
+    login1c: 
+      Z0FBQUFBQnAxNHFqRVBzZHpxWnRkOHNsU0NhcnBaUFJCSDRLR19oeXlMVklYR1Y0ZUFIY3dMbk5sWkhsUUNaSldjMFMyQzBlV2o1a09LMVczUDVKcHhESlBpOWdlUTluRGc9PQ==
   - active: false
     compression: zip_stored
     days_of_month: []
