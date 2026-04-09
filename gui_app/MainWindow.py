@@ -18,7 +18,7 @@ from gui_app.ui_main import Ui_MainWindow
 from gui_app.SettingWindow import SettingWindow, ButtonManager, TaskTableModel, next_run_time, resource_path, days_translation, day_mapping
 
 from service_app.service import load_config, check_source_directory
-
+from service_app.password_encoder import PasswordEncoder
 
 allowed_chars = set("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZабвгдежзийклмнопрстуфхчшщьыъэюяАБВГДЕЖЗИЙКЛМНОПРСТУФХЧШЩЬЫЪЭЮЯ,. *")
 allowed_chars_name = set("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZабвгдежзийклмнопрстуфхчшщьыъэюяАБВГДЕЖЗИЙКЛМНОПРСТУФХЧШЩЬЫЪЭЮЯ-_ ")
@@ -30,6 +30,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         
         self.setWindowIcon(QIcon(resource_path("icons\\archive.ico")))
+
+        #подключаем энкодер паролей
+        self.encoder = PasswordEncoder()
 
          # Создаем объект YAML (лучше сделать это один раз, возможно, как атрибут класса,
         # но для простоты идентично предыдущему поведению помещаем тут)
@@ -156,10 +159,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.edit_compression.setCurrentIndex(0)
         if self.btn_direct_to_archive.isChecked():
             self.btn_direct_to_archive.click()
-        self.edit_1cname.setText("")
+        self.edit_name1c.setText("")
         self.edit_dbname.setText("")
-        self.chk_winlogin.setChecked = self.chk_winlogin.setCheckState(Qt.Checked) 
-        self.edit_1clogin.setText("")
+        self.chk_loginwin.setCheckState(Qt.Checked) 
+        self.edit_login1c.setText("")
         self.tab_object.setCurrentIndex(0)
             
     # пункт меню Изменить     
@@ -202,14 +205,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.btn_direct_to_archive.click()
         if task.get("direct_to_archive", True):
             self.btn_direct_to_archive.click()
-        self.edit_1cname.setText(task.get("1cname", ""))
+        self.edit_name1c.setText(task.get("1cname", ""))
         self.edit_dbname.setText(task.get("dbname", ""))
         if task.get("winlogin", True) == True:
-            winlogin = Qt.Checked
+            loginwin = Qt.Checked
         else:
-            winlogin = Qt.unChecked
-        self.chk_winlogin.setChecked = self.chk_winlogin.setCheckState(winlogin) #
-        self.edit_1clogin.setText(task.get("1clogin", ""))
+            loginwin = Qt.unChecked
+        self.chk_loginwin.setCheckState(loginwin) 
+        login1c = task.get("login1c", "")
+        if not login1c == "":
+            login1c = self.encoder.decode(login1c)
+        self.edit_login1c.setText(login1c)
         self.tab_object.setCurrentIndex(0)
         
 

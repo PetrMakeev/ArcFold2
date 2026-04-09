@@ -1361,7 +1361,7 @@
          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
        </widget>
-       <widget class="QLabel" name="lbl_1cname">
+       <widget class="QLabel" name="lbl_name1c">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -1377,7 +1377,7 @@
          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
        </widget>
-       <widget class="QCheckBox" name="chk_winlogin">
+       <widget class="QCheckBox" name="chk_loginwin">
         <property name="geometry">
          <rect>
           <x>20</x>
@@ -1390,7 +1390,7 @@
          <string>Проверка подлинности Windows </string>
         </property>
        </widget>
-       <widget class="QLabel" name="lbl_1clogin">
+       <widget class="QLabel" name="lbl_login1c">
         <property name="geometry">
          <rect>
           <x>300</x>
@@ -1406,7 +1406,7 @@
          <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
         </property>
        </widget>
-       <widget class="QLineEdit" name="edit_1cname">
+       <widget class="QLineEdit" name="edit_name1c">
         <property name="geometry">
          <rect>
           <x>150</x>
@@ -1426,7 +1426,7 @@
          </rect>
         </property>
        </widget>
-       <widget class="QLineEdit" name="edit_1clogin">
+       <widget class="QLineEdit" name="edit_login1c">
         <property name="geometry">
          <rect>
           <x>520</x>
