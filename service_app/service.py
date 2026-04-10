@@ -32,19 +32,69 @@ def get_executable_path():
         return sys.executable
     return os.path.abspath(sys.argv[0])
 
+def config_marker_time(config, mark = False):
+    if config == [] or config == None:
+        return []
+    else:
+        if 'tasks' in config:
+            for task in config['tasks']:
+                if 'time' in task:
+                    # добавляем символ 't' к строке времени
+                    original_time = task['time']
+                    if mark:
+                        updated_time = f"t{original_time}"
+                    else:
+                        updated_time = original_time.replace('t', '')    
+                    task['time'] = updated_time
+        return config
 
         
 def load_config():
     """Загружает конфигурацию из файла config.yaml."""
-    try:
-        yaml_obj = YAML(typ='safe') # Используем 'safe' тип для безопасной загрузки
-        with open('config.yaml', 'r', encoding="utf-8") as file:
-            config = yaml_obj.load(file)
-        logger.log("info", "Configuration file loaded successfully.")
-        return config
-    except Exception as e:
-        logger.log("error", f"Error loading configuration file: {e}")
-        sys.exit(1)
+    max_retries = 5
+    retry_delay = 0.5 # секунды
+    
+    for attempt in range(max_retries):
+        try:
+            yaml_obj = YAML(typ='safe')
+            with open('config.yaml', 'r', encoding="utf-8") as file:
+                config = yaml_obj.load(file)
+            
+            if not config == None:
+                # Обработка всех задач - удаление маркера времени 
+                config = config_marker_time(config, False)
+                print(config)
+                logger.log("info", "Configuration file loaded successfully.")
+                return config
+            
+        except PermissionError as e:
+            if attempt < max_retries - 1:
+                logger.log("warning", f"File is locked, waiting before retry... Attempt {attempt + 1}/{max_retries}")
+                time.sleep(retry_delay)
+            else:
+                logger.log("error", f"Failed to read configuration file after {max_retries} attempts: {e}")
+                sys.exit(1)
+                
+        except FileNotFoundError as e:
+            logger.log("error", f"Configuration file not found: {e}")
+            sys.exit(1)
+            
+        except Exception as e:
+            logger.log("error", f"Error loading configuration file: {e}")
+            sys.exit(1)    
+    
+    
+    # try:
+    #     yaml_obj = YAML(typ='safe') # Используем 'safe' тип для безопасной загрузки
+    #     with open('config.yaml', 'r', encoding="utf-8") as file:
+    #         config = yaml_obj.load(file)
+    #     print(config)
+    #     logger.log("info", "Configuration file loaded successfully.")
+    #     return config
+     
+    # except Exception as e:
+    #     logger.log("error", f"Error loading configuration file: {e}")
+    #     sys.exit(1)
 
 def hide_console():
     """Скрывает консольное окно."""
@@ -97,9 +147,11 @@ def run_task(task, temp_directory):
     # Проверка на наличие только одного типа маски
     exclude_mask = task.get('exclude_mask')
     include_mask = task.get('include_mask')
-    if exclude_mask and include_mask:
-        logger.log("error", f"Task {task['name']} has both 'exclude_mask' and 'include_mask'. Only one can be specified.")
-        return
+    
+    
+    # if exclude_mask and include_mask:
+    #     logger.log("error", f"Task {task['name']} has both 'exclude_mask' and 'include_mask'. Only one can be specified.")
+    #     return
 
     if validate_files(task['source'], exclude_mask, include_mask):
         archive_path = run_archive_in_process(
@@ -131,6 +183,7 @@ def reload_config():
     global tasks
     logger.log("info","Reloading configuration and rescheduling tasks.")
     config = load_config()
+    config = config_marker_time(config, False)
     if config:
         schedule.clear()  # Очищаем расписание задач
         tasks = config.get('tasks', [])
@@ -143,6 +196,7 @@ def start_service():
     init_db()
     
     config = load_config()  # Загружаем конфигурацию
+    config = config_marker_time(config, False)
     
     # проверяем источники в задачах
     config = check_source_directory(config)
@@ -205,8 +259,10 @@ def check_source_directory(config):
         yaml_obj.indent(mapping=3, sequence=3, offset=2)
 
         # Сохраняем обновленный файл
+        config_marker_time(config, True)
         with open('config.yaml', "w", encoding="utf-8") as file:
             yaml_obj.dump(config, file)        
+        config_marker_time(config, False)
     return config    
         
 def main():

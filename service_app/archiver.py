@@ -23,15 +23,15 @@ def parse_mask(mask):
     :param mask: строка масок, разделённая запятой, либо None
     :return: список масок или пустой список
     """
-    if not mask:
+    if mask == "":
         return []
     return [m.strip() for m in mask.split(",")]
 
 
-def validate_files(source, exclude_masks=None, include_masks=None):
+def validate_files(source, exclude_masks=[], include_masks=[]):
 
-    # exclude_masks = parse_mask(exclude_mask)
-    # include_masks = parse_mask(include_mask)
+    # exclude_masks = parse_mask(exclude_masks)
+    # include_masks = parse_mask(include_masks)
 
     if not os.path.exists(source):
         logger.log("error", f"Source path does not exist: {source}")
@@ -40,25 +40,36 @@ def validate_files(source, exclude_masks=None, include_masks=None):
     if os.path.isfile(source):
         return True
 
-    files = os.listdir(source)
-    matched_files = []
+    # files = os.listdir(source)
+    # matched_files = []
     
-    for root, _, files in os.walk(source):
-        for file in files:
-            file_path = os.path.join(root, file)
-            include_match = any(fnmatch.fnmatch(file, mask) for mask in include_masks) if include_masks else True
-            exclude_match = any(fnmatch.fnmatch(file, mask) for mask in exclude_masks) if exclude_masks else False
+    # for root, _, files in os.walk(source):
+    #     for file in files:
+    #         file_path = os.path.join(root, file)
+    #         include_match = any(fnmatch.fnmatch(file, mask) for mask in include_masks) if include_masks else True
+    #         exclude_match = any(fnmatch.fnmatch(file, mask) for mask in exclude_masks) if exclude_masks else False
 
-            if include_match and not exclude_match:
-                matched_files.append(file_path)
+    #         if include_match and not exclude_match:
+    #             matched_files.append(file_path)
 
-    if not matched_files:
-        logger.log("warning", f"No matching files found in {source}")
-        return False
+    # if not matched_files:
+    #     logger.log("warning", f"No matching files found in {source}")
+    #     return False
 
     return True
 
-def create_archive(task_name, source, destination, exclude_masks=None, include_masks=None, temp_directory=None, direct_to_archive=False, compression="zip_stored"):
+def create_archive(task_name, 
+                   source, 
+                   destination, 
+                   exclude_masks=[], 
+                   include_masks=[], 
+                   temp_directory=None, 
+                   direct_to_archive=False, 
+                   compression="zip_stored",
+                   name1c=None,
+                   dbname=None,
+                   loginwin=False,
+                   login1c=None):
     """
     Создает архив с указанными параметрами.
     
@@ -70,36 +81,92 @@ def create_archive(task_name, source, destination, exclude_masks=None, include_m
     :param temp_directory: Временная директория.
     :param direct_to_archive: Использовать ли временную папку.
     :param compression: Тип сжатия ("zip_stored" или "zip_deflated").
+    :param name1c: имя сервера 1c SQL
+    :param dbname: имя базы данных 1с
+    :param loginwin: авторизация windows (True False)
+    :param login1c: пароль SQL
+    
     """
-    # exclude_masks = parse_mask(exclude_mask)
-    # include_masks = parse_mask(include_mask)
+    # exclude_masks = parse_mask(exclude_masks)
+    # include_masks = parse_mask(include_masks)
     
     try:
         
         # Настройка типа сжатия
         zip_compression = zipfile.ZIP_DEFLATED if compression == "zip_deflated" else zipfile.ZIP_STORED
 
+        # Проверяем и создаем директорию для хранения архива, если она  не существует
         if not os.path.exists(destination):
             os.makedirs(destination)
 
-        if not direct_to_archive and temp_directory and not os.path.exists(temp_directory):
+        # Проверяем и создаем временную директорию, если и не существует
+        if not os.path.exists(temp_directory):
             os.makedirs(temp_directory)
 
 
         archive_name = f"{task_name}-{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.zip"
         archive_path = os.path.join(destination, archive_name)
 
+        print(archive_name)
+        print(archive_path)
+        
         with zipfile.ZipFile(archive_path, 'w', compression=zip_compression) as archive:
             for root, _, files in os.walk(source):
                 for file in files:
                     file_path = os.path.join(root, file)
                     rel_path = os.path.relpath(file_path, source)
 
-                    include_match = any(fnmatch.fnmatch(file, mask) for mask in include_masks) if include_masks else True
-                    exclude_match = any(fnmatch.fnmatch(file, mask) for mask in exclude_masks) if exclude_masks else False
+                  
+                    if include_masks == []:
+                        include_match = True
+                    else:
+                        include_match = any(fnmatch.fnmatch(file, mask) for mask in include_masks) if include_masks else True
+                    if exclude_masks == []:
+                        exclude_match = False
+                    else:
+                        exclude_match = any(fnmatch.fnmatch(file, mask) for mask in exclude_masks) if exclude_masks else False
 
                     if include_match and not exclude_match:
-                        archive.write(file_path, rel_path)
+                        # Определяем путь для добавления в архив
+                        path_to_add = file_path
+                        
+                        # Проверяем, можно ли прочитать файл
+                        try:
+                            with open(file_path, 'rb'):
+                                pass  # Если удалось открыть, значит, файл не заблокирован
+                        except (IOError, OSError) as e:
+                            # Если не удалось открыть, файл, скорее всего, заблокирован
+                            # Копируем его во временную директорию
+                            if temp_directory:
+                                temp_file_path = os.path.join(temp_directory, os.path.basename(file_path))
+                                
+                                # Чтобы избежать конфликта имен при совпадении имен файлов
+                                # в разных поддиректориях, можно сохранить относительный путь
+                                # или использовать уникальные имена. Для простоты здесь
+                                # используется basename, но можно усложнить при необходимости.
+                                
+                                # Пробуем скопировать файл
+                                try:
+                                    # Импортируем shutil в начале файла, если еще не импортирован
+                                    import shutil
+                                    
+                                    # Копируем файл во временную директорию
+                                    shutil.copy2(file_path, temp_file_path)
+                                    
+                                    # Теперь работаем с копией
+                                    path_to_add = temp_file_path
+                                    print(f"Файл {file_path} был заблокирован. Используется копия из {temp_file_path}")
+                                except Exception as copy_error:
+                                    print(f"Не удалось скопировать заблокированный файл {file_path}: {copy_error}")
+                                    continue  # Пропускаем этот файл
+                            else:
+                                # Если временная директория не задана, пропускаем заблокированный файл
+                                print(f"Файл {file_path} заблокирован, но временная директория не указана. Пропуск.")
+                                continue
+                            
+                        
+                        # Добавляем файл (оригинал или копию) в архив
+                        archive.write(path_to_add, rel_path)
 
         logger.log("info", f"Archive created at: {archive_path}")
         return archive_path
@@ -108,7 +175,7 @@ def create_archive(task_name, source, destination, exclude_masks=None, include_m
         logger.log("error", f"Error creating archive: {e}")
         return None
 
-def run_archive_in_process(task_name, source, destination, exclude_mask=None, include_mask=None, temp_directory=None, direct_to_archive=False, compression="zip_stored"):
+def run_archive_in_process(task_name, source, destination, exclude_mask=[], include_mask=[], temp_directory=None, direct_to_archive=False, compression="zip_stored"):
     """
     Запускает процесс архивирования в отдельном процессе.
 

@@ -14,14 +14,21 @@ from PySide6.QtGui import QCursor, QFont, QAction, QIcon, QRegularExpressionVali
 from datetime import datetime
 import os
 from ruamel.yaml import YAML
+from ruamel.yaml.scalarstring import PlainScalarString
+from ruamel.yaml.scalarstring import DoubleQuotedScalarString
+
 from gui_app.ui_main import Ui_MainWindow
 from gui_app.SettingWindow import SettingWindow, ButtonManager, TaskTableModel, next_run_time, resource_path, days_translation, day_mapping
 
-from service_app.service import load_config, check_source_directory
+from service_app.service import load_config, check_source_directory, config_marker_time
 from service_app.password_encoder import PasswordEncoder
+
+
 
 allowed_chars = set("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZабвгдежзийклмнопрстуфхчшщьыъэюяАБВГДЕЖЗИЙКЛМНОПРСТУФХЧШЩЬЫЪЭЮЯ,. *")
 allowed_chars_name = set("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZабвгдежзийклмнопрстуфхчшщьыъэюяАБВГДЕЖЗИЙКЛМНОПРСТУФХЧШЩЬЫЪЭЮЯ-_ ")
+
+
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -120,8 +127,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.config["tasks"] = [task for task in self.config["tasks"] if task["name"] != name_task]
 
             # Сохраняем обновленный файл
+            self.config = config_marker_time(self.config, True)
             with open('config.yaml', "w", encoding="utf-8") as file:
                 self.yaml.dump(self.config, file)
+            self.config = config_marker_time(self.config, False)
 
             self.data = self.load_config()
             self.refresh_grid()
@@ -236,6 +245,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             return False
         if  verify_mask == "":
+            if type_mask == "include":
+                self.curr_include_mask = []
+            elif type_mask == "exclude":
+                self.curr_exclude_mask = []
             return True
         # получаем список масок
         try:
@@ -292,6 +305,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def load_config(self):
         data = []
         self.config = load_config()
+        self.config = config_marker_time(self.config, False)
         
         # проверяем источники в задачах
         self.config = check_source_directory(self.config)
@@ -303,10 +317,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not os.path.exists(app_path):
             self.temp_directory =  os.path.dirname(os.path.abspath(__file__)) + "\\temp_archiver" 
         self.config["temp_directory"] = self.temp_directory
+        # Обработка всех задач  - установка маркера времени 
+        
         # Сохраняем изменения о временной папке в конфигурационный файл
+        self.config = config_marker_time(self.config, True)
         with open('config.yaml', "w", encoding="utf-8") as file:
             self.yaml.dump(self.config, file)
-        
+        self.config = config_marker_time(self.config, False)
         # формируем таблицу для грида
         for el in self.config.get('tasks',[]):
             next_start_task = next_run_time(el)
@@ -387,7 +404,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "schedule": "monthly" if self.edit_period.currentIndex()==2 else "weekly" if self.edit_period.currentIndex()==1 else "daily",
             "days_of_week": day_of_week,
             "days_of_month" : day_of_month,
-            "time": self.edit_time.text(),
+            "time": f"t{(self.edit_time.text())}",
             "source": self.edit_source.text(),
             "destination": self.edit_destination.text(),
             "include_mask": self.curr_include_mask,
@@ -410,10 +427,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # Обновляем элемент в списке tasks
                 self.config["tasks"][self.curr_task_id].update(task)
 
+
             # Сохраняем обновленный файл
+            self.config = config_marker_time(self.config, True)
             with open('config.yaml', "w", encoding="utf-8") as file:
                 self.yaml.dump(self.config, file)
-
+            self.config = config_marker_time(self.config, False)
+            
         except Exception as e:
             print("Ошибка сохранения конфигурации")
         
@@ -431,8 +451,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.config["log_retention_days"] = log_retention_days
 
             # Сохраняем обновленный файл
+            self.config = config_marker_time(self.config, True)
             with open('config.yaml', "w", encoding="utf-8") as file:
                 self.yaml.dump(self.config, file)
+            self.config = config_marker_time(self.config, False)
 
         except Exception as e:
             print("Ошибка сохранения конфигурации")
@@ -570,6 +592,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.edit_login1c.setEnabled(True)
             self.lbl_login1c.setEnabled(True)
         
+    def select_folder(self, dialog_caption, initial_path, target_widget_name):
+        """
+        Открывает диалог выбора папки и устанавливает путь в указанное поле.
+
+        :param dialog_caption: Заголовок диалогового окна.
+        :param initial_path: Начальный путь для отображения в диалоге.
+        :param target_widget_name: Имя виджета (Edit Line), куда нужно установить путь ('destination', 'source' и т.п.).
+        """
+        options = QFileDialog.Options()
+        # options |= QFileDialog.DontUseNativeDialog # Опционально
+        folder_path = QFileDialog.getExistingDirectory(self, dialog_caption, initial_path, options=options)
+
+        if folder_path:
+            # Предположим, у вас есть словарь или способ получить виджет по строковому имени
+            # Ниже приведен пример, если у вас просто два конкретных поля
+            if target_widget_name == "destination":
+                self.edit_destination.setText(folder_path)
+            elif target_widget_name == "source": # Пример для другого поля
+                self.edit_source.setText(folder_path)
+            # Добавьте другие условия для других полей при необходимости
+            # Или реализуйте более универсальный способ, например:
+            # getattr(self, f'edit_{target_widget_name}').setText(folder_path)
+            # если ваши поля строго соответствуют шаблону edit_<name>
+
     
     # устанавливаем значение всем кнопками дней недели    
     def set_days_of_week(self, checked=False):

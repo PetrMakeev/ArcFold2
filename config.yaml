@@ -1,64 +1,22 @@
 log_retention_days: 8
 temp_directory: d:\work\ArcFolder2\gui_app\temp_archiver
 tasks:
-  - active: false
+  - active: true
     compression: zip_deflated
     days_of_month: []
     days_of_week: []
-    destination: D:\test2
+    destination: D:/!test2
     direct_to_archive: true
     exclude_mask: []
-    include_mask: [.html, .d*]
+    include_mask: []
     keep_last: 5
     name: Backup_Task_1
     obj_backup: file
     schedule: daily
-    source: D:\test1
-    time: 19:41
-    name1c: Server1c
+    source: D:/!test1
+    time: t13:43
+    name1c: ''
     dbname: BuchPro
     loginwin: false
     login1c: 
-      Z0FBQUFBQnAxNHFqRVBzZHpxWnRkOHNsU0NhcnBaUFJCSDRLR19oeXlMVklYR1Y0ZUFIY3dMbk5sWkhsUUNaSldjMFMyQzBlV2o1a09LMVczUDVKcHhESlBpOWdlUTluRGc9PQ==
-  - active: false
-    compression: zip_stored
-    days_of_month: []
-    days_of_week: [Monday, Friday, Sunday]
-    destination: D:\test2\Новая папка
-    direct_to_archive: true
-    exclude_mask: [.html, .d*]
-    include_mask: []
-    keep_last: 3
-    name: резервирование_2_1
-    obj_backup: file
-    schedule: weekly
-    source: D:\test1
-    time: 19:46
-  - active: false
-    compression: zip_deflated
-    days_of_month: []
-    days_of_week: [Sunday]
-    destination: D:\test2
-    direct_to_archive: true
-    exclude_mask: []
-    include_mask: [.]
-    keep_last: 3
-    name: Backup_Task_2_2
-    obj_backup: file
-    schedule: weekly
-    source: D:\test1
-    time: 12:04
-  - active: false
-    compression: zip_stored
-    days_of_month: [5, 6, 7, 8]
-    days_of_week: []
-    destination: D:\test2
-    direct_to_archive: false
-    exclude_mask: ['*.tmp']
-    include_mask: []
-    keep_last: 5
-    name: Monthly_Backup
-    obj_backup: file
-    schedule: monthly
-    source: D:\test1
-    time: 04:00
+      Z0FBQUFBQnAyTGdUdGl6emtTaDZYSVZSVEwyLWV2Qk4xTXdIOFZkcC1rMElTYmNKOHVXTEQ3clRkdk5jYW9Ja2VYMmJWU29fT0t2ZTRNTlM4RUg1RmE1NlRBQUo1UlB0Wnc9PQ==

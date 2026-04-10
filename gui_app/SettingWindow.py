@@ -331,6 +331,10 @@ def next_run_time(task):
                  }
     :return: Объект datetime с указанием следующего времени запуска.
     """
+    # убираем маркер времени в time
+    original_time = task['time']
+    updated_time = original_time.replace('t', '')
+    task["time"] = updated_time
     now = datetime.now()
 
     # Тип расписания
