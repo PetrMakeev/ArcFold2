@@ -1,22 +1,22 @@
 log_retention_days: 8
 temp_directory: d:\work\ArcFolder2\gui_app\temp_archiver
 tasks:
-  - active: true
+  - active: false
     compression: zip_deflated
-    days_of_month: []
+    days_of_month: [10]
     days_of_week: []
     destination: D:/!test2
     direct_to_archive: true
-    exclude_mask: []
+    exclude_mask: [сам*]
     include_mask: []
     keep_last: 5
     name: Backup_Task_1
     obj_backup: file
-    schedule: daily
+    schedule: monthly
     source: D:/!test1
-    time: t13:43
+    time: t15:03
     name1c: ''
     dbname: BuchPro
     loginwin: false
     login1c: 
-      Z0FBQUFBQnAyTGdUdGl6emtTaDZYSVZSVEwyLWV2Qk4xTXdIOFZkcC1rMElTYmNKOHVXTEQ3clRkdk5jYW9Ja2VYMmJWU29fT0t2ZTRNTlM4RUg1RmE1NlRBQUo1UlB0Wnc9PQ==
+      Z0FBQUFBQnAyTXJpdVYyOGdVZkF3cTNMUWtkSWdtTFNfTWtrcjNHUDFkT0FKNU1ZUEdkcFR0SHRoTEU2VU5FTGcxcllfSV8xSVhwSkM4S2JfcGFfWGUtY0RGSUxLUTh1amc9PQ==

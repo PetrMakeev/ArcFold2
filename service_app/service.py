@@ -63,7 +63,6 @@ def load_config():
             if not config == None:
                 # Обработка всех задач - удаление маркера времени 
                 config = config_marker_time(config, False)
-                print(config)
                 logger.log("info", "Configuration file loaded successfully.")
                 return config
             
