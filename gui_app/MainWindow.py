@@ -223,7 +223,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.chk_safe_db.setChecked(False)
 
-        print(task.get("name1с", ""))
         self.edit_name1c.setText(task.get("name1c", ""))
         self.edit_dbname.setText(task.get("dbname", ""))
         if task.get("loginwin", True) == True:

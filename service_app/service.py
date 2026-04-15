@@ -160,8 +160,13 @@ def run_task(task, temp_directory):
             exclude_mask=exclude_mask,
             include_mask=include_mask,
             temp_directory=temp_directory,
-            direct_to_archive=task.get('direct_to_archive', False,),
-            compression = task.get('compression', "zip_deflated")
+            compression = task.get('compression', "zip_deflated"),
+            safe_file=False,
+            safe_db=False,
+            name1c="",
+            dbname="",
+            loginwin=False,
+            login1c=""
         )
         # удаляем временную папку 
         if os.path.exists(temp_directory):

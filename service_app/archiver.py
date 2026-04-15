@@ -63,13 +63,14 @@ def create_archive(task_name,
                    destination, 
                    exclude_masks=[], 
                    include_masks=[], 
-                   temp_directory=None, 
-                   direct_to_archive=False, 
+                   temp_directory="", 
                    compression="zip_stored",
-                   name1c=None,
-                   dbname=None,
+                   safe_file=False,
+                   safe_db=False,
+                   name1c="",
+                   dbname="",
                    loginwin=False,
-                   login1c=None):
+                   login1c=""):
     """
     Создает архив с указанными параметрами.
     
@@ -137,7 +138,7 @@ def create_archive(task_name,
                         except (IOError, OSError) as e:
                             # Если не удалось открыть, файл, скорее всего, заблокирован
                             # Копируем его во временную директорию
-                            if temp_directory:
+                            if temp_directory == "":
                                 temp_file_path = os.path.join(temp_directory, os.path.basename(file_path))
                                 
                                 # Чтобы избежать конфликта имен при совпадении имен файлов
@@ -175,7 +176,8 @@ def create_archive(task_name,
         logger.log("error", f"Error creating archive: {e}")
         return None
 
-def run_archive_in_process(task_name, source, destination, exclude_mask=[], include_mask=[], temp_directory=None, direct_to_archive=False, compression="zip_stored"):
+def run_archive_in_process(task_name, source, destination, exclude_mask=[], include_mask=[], temp_directory="", compression="zip_stored", safe_file=False,
+                           safe_db=False, name1c="", dbname="", loginwin=False, login1c=""):
     """
     Запускает процесс архивирования в отдельном процессе.
 
@@ -190,8 +192,8 @@ def run_archive_in_process(task_name, source, destination, exclude_mask=[], incl
     """
     process = multiprocessing.Process(
         target=create_archive,
-        args=(task_name, source, destination, exclude_mask, include_mask, temp_directory, direct_to_archive, compression)
-    )
+        args=(task_name, source, destination, exclude_mask, include_mask, temp_directory, compression, safe_file, safe_db, name1c, dbname, loginwin, login1c )
+        )
     process.start()
     logger.log("info", f"Archiving process started with PID {process.pid} for task '{task_name}'")
     return process
