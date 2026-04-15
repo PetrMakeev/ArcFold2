@@ -1,7 +1,7 @@
 import ctypes
 import sys
 
-from gui_app.main import main
+from gui_app.main import main   
 
 
 

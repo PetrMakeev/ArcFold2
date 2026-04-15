@@ -15,8 +15,10 @@ tasks:
     schedule: monthly
     source: D:/!test1
     time: t15:03
-    name1c: ''
+    name1c: zzz
     dbname: BuchPro
     loginwin: false
     login1c: 
-      Z0FBQUFBQnAyTXJpdVYyOGdVZkF3cTNMUWtkSWdtTFNfTWtrcjNHUDFkT0FKNU1ZUEdkcFR0SHRoTEU2VU5FTGcxcllfSV8xSVhwSkM4S2JfcGFfWGUtY0RGSUxLUTh1amc9PQ==
+      Z0FBQUFBQnAzNnAwODFoODFrZUxlY25TSXJVSWpvd1FxeFRUTDdZR2NZQ0c0ODVrdzdoVE8yY29SbVphWFN1dGE5WG1NYTVpUzVIN3NnQk5IZWtiTko2MGZRN0hmaGs4V2c9PQ==
+    safe_file: true
+    safe_db: true

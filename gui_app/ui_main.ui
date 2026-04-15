@@ -1091,38 +1091,6 @@
       </property>
      </item>
     </widget>
-    <widget class="QPushButton" name="btn_direct_to_archive">
-     <property name="geometry">
-      <rect>
-       <x>410</x>
-       <y>310</y>
-       <width>321</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Копировать напрямую в архив</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QLabel" name="lbl_keep_last_3">
-     <property name="geometry">
-      <rect>
-       <x>60</x>
-       <y>310</y>
-       <width>341</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Использование временной папки для создания архива</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-     </property>
-    </widget>
     <widget class="QPushButton" name="btn_save">
      <property name="geometry">
       <rect>
@@ -1163,7 +1131,7 @@
      </property>
      <widget class="QWidget" name="tab_file">
       <attribute name="title">
-       <string>Копирование файлов</string>
+       <string>Настройка архивирования файлов</string>
       </attribute>
       <widget class="QFrame" name="frm_file">
        <property name="geometry">
@@ -1325,7 +1293,7 @@
      </widget>
      <widget class="QWidget" name="tab_db1c">
       <attribute name="title">
-       <string>Копирование базы MS SQL</string>
+       <string>Настройка архивирования базы 1С MS SQL</string>
       </attribute>
       <widget class="QFrame" name="frm_db1c">
        <property name="geometry">
@@ -1516,6 +1484,32 @@
       <enum>Qt::Orientation::Horizontal</enum>
      </property>
     </widget>
+    <widget class="QCheckBox" name="chk_safe_file">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>310</y>
+       <width>201</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>  Архивировать файлы</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="chk_safe_db">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>310</y>
+       <width>201</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>  Архивировать базу 1С</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QFrame" name="bottom_bar">
     <property name="geometry">
@@ -1564,7 +1558,6 @@
   <tabstop>btn_destination</tabstop>
   <tabstop>edit_keep_last</tabstop>
   <tabstop>edit_compression</tabstop>
-  <tabstop>btn_direct_to_archive</tabstop>
   <tabstop>tab_object</tabstop>
   <tabstop>btn_source</tabstop>
   <tabstop>edit_mask_incl</tabstop>

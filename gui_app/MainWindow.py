@@ -166,8 +166,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.edit_mask_excl.setText("")
         self.edit_keep_last.setValue(1)
         self.edit_compression.setCurrentIndex(0)
-        if self.btn_direct_to_archive.isChecked():
-            self.btn_direct_to_archive.click()
+        self.chk_safe_file.setChecked(False) 
+        self.chk_safe_db.setChecked(False) 
         self.edit_name1c.setText("")
         self.edit_dbname.setText("")
         self.chk_loginwin.setCheckState(Qt.Checked) 
@@ -212,11 +212,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.edit_keep_last.setValue(task.get("keep_last", 5))
         compression = task.get("compression", "zip_stored")
         self.edit_compression.setCurrentIndex(0 if compression == "zip_stored" else 1)
-        if self.btn_direct_to_archive.isChecked():
-            self.btn_direct_to_archive.click()
-        if task.get("direct_to_archive", True):
-            self.btn_direct_to_archive.click()
-        self.edit_name1c.setText(task.get("name1с", ""))
+        
+        if task.get("safe_file", False) == True:
+            self.chk_safe_file.setChecked(True)
+        else:
+            self.chk_safe_file.setChecked(False)
+        
+        if task.get("safe_db", False) == True:
+            self.chk_safe_db.setChecked(True)
+        else:
+            self.chk_safe_db.setChecked(False)
+
+        print(task.get("name1с", ""))
+        self.edit_name1c.setText(task.get("name1c", ""))
         self.edit_dbname.setText(task.get("dbname", ""))
         if task.get("loginwin", True) == True:
             #loginwin = Qt.Checked
@@ -349,23 +357,47 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # сохранение задачи
     def save_task(self):
         # проверяем данные перед сохранением      
-        if not set(self.edit_name.text()).issubset(allowed_chars_name): 
-            QMessageBox.critical(self, "Ошибка", f"В имени задачи используются недопустимые символы. Повторите ввод")
-            self.edit_name.setFocus()
-            return
-        if self.edit_source.text() == "":
-            QMessageBox.critical(self, "Ошибка", f"Не указана папка для архивации. Повторите ввод")
-            self.edit_source.setFocus()
-            return
-        if self.edit_destination.text() == "":
-            QMessageBox.critical(self, "Ошибка", f"Не указана папка для сохранения архива. Повторите ввод")
-            self.edit_destination.setFocus()
-            return
-        
-        if  self.edit_source.text().strip() == self.edit_destination.text().strip():
-            QMessageBox.critical(self, "Ошибка", f"Папка для сохранения архива должна отличатся от папки для архивации. Повторите ввод")
-            self.edit_destination.setFocus()
-            return         
+        if self.chk_safe_file.isChecked():
+            
+            
+            if not set(self.edit_name.text()).issubset(allowed_chars_name): 
+                QMessageBox.critical(self, "Ошибка", f"В имени задачи используются недопустимые символы. Повторите ввод")
+                self.edit_name.setFocus()
+                self.tab_object.setCurrentIndex(0)
+                return
+            if self.edit_source.text() == "":
+                QMessageBox.critical(self, "Ошибка", f"Не указана папка для архивации. Повторите ввод")
+                self.tab_object.setCurrentIndex(0)
+                self.edit_source.setFocus()
+                return
+            if self.edit_destination.text() == "":
+                QMessageBox.critical(self, "Ошибка", f"Не указана папка для сохранения архива. Повторите ввод")
+                self.tab_object.setCurrentIndex(0)
+                self.edit_destination.setFocus()
+                return
+            
+            if  self.edit_source.text().strip() == self.edit_destination.text().strip():
+                QMessageBox.critical(self, "Ошибка", f"Папка для сохранения архива должна отличатся от папки для архивации. Повторите ввод")
+                self.tab_object.setCurrentIndex(0)
+                self.edit_destination.setFocus()
+                return         
+        if self.chk_safe_db.isChecked():
+            if self.edit_name1c.text() == "":
+                QMessageBox.critical(self, "Ошибка", f"Не указано имя сервера 1С для архивации. Повторите ввод")
+                self.tab_object.setCurrentIndex(1)
+                self.edit_name1c.setFocus()
+                return
+            if self.edit_dbname.text() == "":
+                QMessageBox.critical(self, "Ошибка", f"Не указано имя базы 1С для архивации. Повторите ввод")
+                self.tab_object.setCurrentIndex(1)
+                self.edit_dbname.setFocus()
+                return
+            if (self.chk_loginwin.isChecked() == True) and (self.edit_login1c.text() == ""):
+                QMessageBox.critical(self, "Ошибка", f"Не указан логин пользователя базы 1С для архивации. Повторите ввод")
+                self.tab_object.setCurrentIndex(1)
+                self.edit_login1c.setFocus()
+                return
+
         
         
         # определяем маски
@@ -404,12 +436,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "schedule": "monthly" if self.edit_period.currentIndex()==2 else "weekly" if self.edit_period.currentIndex()==1 else "daily",
             "days_of_week": day_of_week,
             "days_of_month" : day_of_month,
-            "time": f"t{(self.edit_time.text())}",
+            "time": self.edit_time.text(),
             "source": self.edit_source.text(),
             "destination": self.edit_destination.text(),
             "include_mask": self.curr_include_mask,
             "exclude_mask": self.curr_exclude_mask,
-            "direct_to_archive": self.btn_direct_to_archive.isChecked(),
+            "safe_file": self.chk_safe_file.isChecked(),
+            "safe_db": self.chk_safe_db.isChecked(),
             "compression": "zip_deflated" if self.edit_compression.currentIndex() == 1 else "zip_stored",
             "keep_last": self.edit_keep_last.value(),
             "name1c": self.edit_name1c.text(),
@@ -492,6 +525,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btn_source.clicked.connect(lambda: self.select_folder("Выберите папку для архивирования...", self.edit_source.text(), "source"))
         self.btn_destination.clicked.connect(lambda: self.select_folder("Выберите папку сохранения архива...", self.edit_destination.text(), "destination"))
         
+        
         # реакция кнопок с функцией зажатия
         self.ui_elements = {
             "btn_day_0": self.btn_day_0,
@@ -532,8 +566,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "btn_m_28" : self.btn_m_28,
             "btn_m_29" : self.btn_m_29,
             "btn_m_30" : self.btn_m_30,
-            "btn_m_31" : self.btn_m_31,
-            "btn_direct_to_archive" : self.btn_direct_to_archive
+            "btn_m_31" : self.btn_m_31
         }
         self.button_manager = ButtonManager( self.ui_elements)  
 
@@ -577,12 +610,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btn_m_29.clicked.connect(lambda: self.button_manager.toggle_button("btn_m_29", self.btn_m_29.isChecked()))
         self.btn_m_30.clicked.connect(lambda: self.button_manager.toggle_button("btn_m_30", self.btn_m_30.isChecked()))
         self.btn_m_31.clicked.connect(lambda: self.button_manager.toggle_button("btn_m_31", self.btn_m_31.isChecked()))
-        self.btn_direct_to_archive.clicked.connect(lambda: self.button_manager.toggle_button("btn_direct_to_archive", self.btn_direct_to_archive.isChecked()))
+        
  
-        # реакция на изменение чекбокса 
+        # реакция на изменение чекбокса авторизации 1с 
         self.chk_loginwin.toggled.connect(self.set_login1c)
  
  
+
     # устанавливаем доступность корректировки поля пароля 1с
     def set_login1c(self, checked):
         if checked:
