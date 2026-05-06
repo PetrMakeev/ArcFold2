@@ -14,11 +14,11 @@ tasks:
     obj_backup: file
     schedule: daily
     source: D:/!test1
-    time: t20:27
-    name1c: zzz
-    dbname: BuchPro
+    time: t14:30
+    name1c: DESKTOP-KH3QULT
+    dbname: test
     loginwin: false
     login1c: 
-      Z0FBQUFBQnAzNjQ0bmp4U2ZiWlVLUy1ILVVha05UYVRjNVFUREY0T3dqWElDZXI2MmpWS1M1dnVDckRCSnlHOTlXWWFtVmZhd2V1b0M0U0Npb0ZtWTJIR1pmdk5oV1c4bFE9PQ==
-    safe_file: true
-    safe_db: false
+      Z0FBQUFBQnAtd29EeGFKQm1HaE1kZGRRWmhGUGhLVXlzQXdZQmhUS1JWUDdBUkZha2FyOUJROFA1VkpHUmVFbXhaSTR1UVdTUnROTlBRQUxXM2FyRTlDQk1Vc2FvU24wM1E9PQ==
+    safe_file: false
+    safe_db: true

@@ -5,8 +5,8 @@ from datetime import datetime
 from service_app.logger import setup_logger
 import fnmatch
 import multiprocessing
-
-
+import subprocess
+import shutil
 import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -77,19 +77,19 @@ def create_archive(task_name,
     :param task_name: Имя задачи.
     :param source: Исходный путь.
     :param destination: Путь для сохранения архива.
-    :param exclude_mask: Маска исключаемых файлов.
-    :param include_mask: Маска включаемых файлов.
+    :param exclude_mask: список Маска исключаемых файлов.
+    :param include_mask: список Маска включаемых файлов.
     :param temp_directory: Временная директория.
     :param direct_to_archive: Использовать ли временную папку.
     :param compression: Тип сжатия ("zip_stored" или "zip_deflated").
+    :param safe_file: архивирование файлов 
+    :param safe_db: архивирование базы
     :param name1c: имя сервера 1c SQL
     :param dbname: имя базы данных 1с
     :param loginwin: авторизация windows (True False)
     :param login1c: пароль SQL
     
     """
-    # exclude_masks = parse_mask(exclude_masks)
-    # include_masks = parse_mask(include_masks)
     
     try:
         
@@ -104,71 +104,113 @@ def create_archive(task_name,
         if not os.path.exists(temp_directory):
             os.makedirs(temp_directory)
 
-
         archive_name = f"{task_name}-{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.zip"
         archive_path = os.path.join(destination, archive_name)
 
-        print(archive_name)
-        print(archive_path)
-        
+         # Создаем резервную копию базы данных, если нужно
+        db_backup_path = None
+        if safe_db:
+            if not name1c or not dbname:
+                logger.log("info","Для резервного копирования базы данных необходимо указать name1c и dbname")
+                raise ValueError("Для резервного копирования базы данных необходимо указать name1c и dbname")
+            
+            # Генерируем имя файла резервной копии базы
+            db_backup_filename = f"db_backup_{dbname}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.bak"
+            db_backup_path = os.path.join(temp_directory, db_backup_filename)
+            
+            # Формируем команду для резервного копирования базы данных
+            if loginwin:
+                # Используем авторизованного пользователя Windows
+                cmd = [
+                    "sqlcmd",
+                    "-S", name1c,
+                    "-E",  # Использует доверительное соединение Windows Authentication
+                    "-Q", f"BACKUP DATABASE [{dbname}] TO DISK = '{db_backup_path}' WITH FORMAT, MEDIANAME = 'BackupMedia', NAME = 'Full Backup of {dbname}'"
+                ]
+            
+            else:
+                # Используем SQL Server аутентификацию
+                if not login1c:
+                    raise ValueError("При использовании SQL-аутентификации необходимо указать логин/пароль SQL")
+                
+                # Предполагаем, что login1c содержит и логин, и пароль в формате "username:password" или только пароль
+                # Для простоты предположим, что это пароль, а логин - sa
+                cmd = [
+                    "sqlcmd",
+                    "-S", name1c,
+                    "-U", "sa",  # Или другой пользователь, если нужно
+                    "-P", login1c,
+                    "-Q", f"BACKUP DATABASE [{dbname}] TO DISK = '{db_backup_path}' WITH FORMAT, MEDIANAME = 'BackupMedia', NAME = 'Full Backup of {dbname}'"
+                ]
+            
+            # Выполняем команду резервного копирования
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            
+            if result.returncode != 0:
+                raise RuntimeError(f"Ошибка при создании резервной копии базы данных: {result.stderr}")
+            else:
+                logger.log("info",f"Резервная копия базы данных создана: {db_backup_path}")
+
         with zipfile.ZipFile(archive_path, 'w', compression=zip_compression) as archive:
-            for root, _, files in os.walk(source):
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    rel_path = os.path.relpath(file_path, source)
+            # Архивируем файлы, если нужно
+            if safe_file:
+                for root, _, files in os.walk(source):
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        rel_path = os.path.relpath(file_path, source)
 
-                  
-                    if include_masks == []:
-                        include_match = True
-                    else:
-                        include_match = any(fnmatch.fnmatch(file, mask) for mask in include_masks) if include_masks else True
-                    if exclude_masks == []:
-                        exclude_match = False
-                    else:
-                        exclude_match = any(fnmatch.fnmatch(file, mask) for mask in exclude_masks) if exclude_masks else False
+                      
+                        if include_masks == []:
+                            include_match = True
+                        else:
+                            include_match = any(fnmatch.fnmatch(file, mask) for mask in include_masks) if include_masks else True
+                        if exclude_masks == []:
+                            exclude_match = False
+                        else:
+                            exclude_match = any(fnmatch.fnmatch(file, mask) for mask in exclude_masks) if exclude_masks else False
 
-                    if include_match and not exclude_match:
-                        # Определяем путь для добавления в архив
-                        path_to_add = file_path
-                        
-                        # Проверяем, можно ли прочитать файл
-                        try:
-                            with open(file_path, 'rb'):
-                                pass  # Если удалось открыть, значит, файл не заблокирован
-                        except (IOError, OSError) as e:
-                            # Если не удалось открыть, файл, скорее всего, заблокирован
-                            # Копируем его во временную директорию
-                            if temp_directory == "":
-                                temp_file_path = os.path.join(temp_directory, os.path.basename(file_path))
-                                
-                                # Чтобы избежать конфликта имен при совпадении имен файлов
-                                # в разных поддиректориях, можно сохранить относительный путь
-                                # или использовать уникальные имена. Для простоты здесь
-                                # используется basename, но можно усложнить при необходимости.
-                                
-                                # Пробуем скопировать файл
-                                try:
-                                    # Импортируем shutil в начале файла, если еще не импортирован
-                                    import shutil
-                                    
-                                    # Копируем файл во временную директорию
-                                    shutil.copy2(file_path, temp_file_path)
-                                    
-                                    # Теперь работаем с копией
-                                    path_to_add = temp_file_path
-                                    print(f"Файл {file_path} был заблокирован. Используется копия из {temp_file_path}")
-                                except Exception as copy_error:
-                                    print(f"Не удалось скопировать заблокированный файл {file_path}: {copy_error}")
-                                    continue  # Пропускаем этот файл
-                            else:
-                                # Если временная директория не задана, пропускаем заблокированный файл
-                                print(f"Файл {file_path} заблокирован, но временная директория не указана. Пропуск.")
-                                continue
+                        if include_match and not exclude_match:
+                            # Определяем путь для добавления в архив
+                            path_to_add = file_path
                             
-                        
-                        # Добавляем файл (оригинал или копию) в архив
-                        archive.write(path_to_add, rel_path)
+                            # Проверяем, можно ли прочитать файл
+                            try:
+                                with open(file_path, 'rb'):
+                                    pass  # Если удалось открыть, значит, файл не заблокирован
+                            except (IOError, OSError) as e:
+                                # Если не удалось открыть, файл, скорее всего, заблокирован
+                                # Копируем его во временную директорию
+                                if temp_directory != "":
+                                    temp_file_path = os.path.join(temp_directory, os.path.basename(file_path))
+                                    
+                                    # Пробуем скопировать файл
+                                    try:
+                                        # Копируем файл во временную директорию
+                                        shutil.copy2(file_path, temp_file_path)
+                                        
+                                        # Теперь работаем с копией
+                                        path_to_add = temp_file_path
+                                        logger.log("info", f"Файл {file_path} был заблокирован. Используется копия из {temp_file_path}")
+                                    except Exception as copy_error:
+                                        logger.log("info", f"Не удалось скопировать заблокированный файл {file_path}: {copy_error}")
+                                        continue  # Пропускаем этот файл
+                                else:
+                                    # Если временная директория не задана, пропускаем заблокированный файл
+                                    logger.log("info", f"Файл {file_path} заблокирован, но временная директория не указана. Пропуск.")
+                                    continue
+                                
+                            
+                            # Добавляем файл (оригинал или копию) в архив
+                            archive.write(path_to_add, rel_path)
 
+            # Добавляем резервную копию базы данных в архив, если она была создана
+            if db_backup_path and os.path.exists(db_backup_path):
+                # Извлекаем имя файла из пути для добавления в архив
+                db_rel_path = os.path.basename(db_backup_path)
+                archive.write(db_backup_path, db_rel_path)
+                logger.log("info", f"Резервная копия базы данных добавлена в архив: {db_rel_path}")
+
+        # Логирование успешного создания архива
         logger.log("info", f"Archive created at: {archive_path}")
         return archive_path
 

@@ -12,6 +12,7 @@ import shutil
 from service_app.logger import setup_logger
 from service_app.db_handler import init_db, log_task_status
 from service_app.archiver import run_archive_in_process, validate_files, watch_config
+from service_app.password_encoder import PasswordEncoder
 
 
 logger = setup_logger()
@@ -153,6 +154,13 @@ def run_task(task, temp_directory):
     #     return
 
     if validate_files(task['source'], exclude_mask, include_mask):
+        encoder = PasswordEncoder()
+        pass1c = task['login1c']
+        if isinstance(pass1c, str):
+            pass1c = encoder.decode(pass1c)
+        else:
+            pass1c = '000000000000000000000000000000000000000'
+        
         archive_path = run_archive_in_process(
             task_name=task['name'],
             source=task['source'],
@@ -161,12 +169,12 @@ def run_task(task, temp_directory):
             include_mask=include_mask,
             temp_directory=temp_directory,
             compression = task.get('compression', "zip_deflated"),
-            safe_file=False,
-            safe_db=False,
-            name1c="",
-            dbname="",
-            loginwin=False,
-            login1c=""
+            safe_file=task['safe_file'],
+            safe_db=task['safe_db'],
+            name1c=task['name1c'],
+            dbname=task['dbname'],
+            loginwin=task['loginwin'],
+            login1c=pass1c
         )
         # удаляем временную папку 
         if os.path.exists(temp_directory):
