@@ -238,6 +238,10 @@ def run_archive_in_process(task_name, source, destination, exclude_mask=[], incl
         )
     process.start()
     logger.log("info", f"Archiving process started with PID {process.pid} for task '{task_name}'")
+            
+    # ДОЖИДАЕМСЯ ЗАВЕРШЕНИЯ ПРОЦЕССА
+    process.join()
+    
     return process
 
 

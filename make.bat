@@ -2,5 +2,6 @@ del ArcFold.exe
 del ArcFoldService.exe
 del dist\Arc*
 rem pyinstaller --name ArcFoldService --onefile --noconsole --add-data "icons;icons" --icon="icons/monitor.ico" service.py
+pyinstaller --name ArcFoldService --onefile --add-data "icons;icons" --icon="icons/monitor.ico" service.py
 pyinstaller --name ArcFold --onefile --noconsole --add-data "icons;icons" --icon="icons/archive.ico" main.py
 copy dist\Arc*.exe .

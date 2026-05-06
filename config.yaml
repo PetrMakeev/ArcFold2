@@ -1,5 +1,5 @@
 log_retention_days: 8
-temp_directory: d:\work\ArcFolder2\gui_app\temp_archiver
+temp_directory: D:\work\ArcFolder2\tmp_directory
 tasks:
   - active: true
     compression: zip_deflated
@@ -7,18 +7,18 @@ tasks:
     days_of_week: []
     destination: D:/!test2
     direct_to_archive: true
-    exclude_mask: [сам*]
+    exclude_mask: []
     include_mask: []
     keep_last: 5
     name: Backup_Task_1
     obj_backup: file
     schedule: daily
     source: D:/!test1
-    time: t14:30
+    time: t15:00
     name1c: DESKTOP-KH3QULT
     dbname: test
-    loginwin: false
+    loginwin: true
     login1c: 
-      Z0FBQUFBQnAtd29EeGFKQm1HaE1kZGRRWmhGUGhLVXlzQXdZQmhUS1JWUDdBUkZha2FyOUJROFA1VkpHUmVFbXhaSTR1UVdTUnROTlBRQUxXM2FyRTlDQk1Vc2FvU24wM1E9PQ==
-    safe_file: false
-    safe_db: true
+      Z0FBQUFBQnAteEQ2ODczOWVfUjBiV3VBMnRIUWp4R19wWHZfREFHbVU2VlJZTEgwYVRXY2xNV1c1c0FmUjl3cW12MkhGanhtNEoyMjNaVEpOdmRGdDl4YTJrNTM1OGNWamc9PQ==
+    safe_file: true
+    safe_db: false
